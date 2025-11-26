@@ -1,4 +1,5 @@
 const Income = require('../models/Income');
+const mongoose = require('mongoose');
 
 // Create income entry
 exports.createIncome = async (req, res) => {
@@ -35,7 +36,7 @@ exports.getTotalIncome = async (req, res) => {
     const userId = req.user.userId;
     const { month } = req.query; // optional
 
-    let match = { userId: require('mongoose').Types.ObjectId(userId) };
+    let match = { userId: new mongoose.Types.ObjectId(userId) };
 
     if (month === 'current') {
       const now = new Date();
@@ -50,6 +51,23 @@ exports.getTotalIncome = async (req, res) => {
     ]);
 
     res.json({ total: result[0]?.total || 0 });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// DELETE income
+exports.deleteIncome = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { id } = req.params;
+
+    const income = await Income.findById(id);
+    if (!income) return res.status(404).json({ error: 'Income not found' });
+    if (income.userId.toString() !== userId) return res.status(403).json({ error: 'Not authorized' });
+
+    await Income.findByIdAndDelete(id);
+    res.json({ message: 'Income deleted' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
