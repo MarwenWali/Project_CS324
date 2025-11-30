@@ -40,11 +40,13 @@ const authRoutes = require('./routes/auth');
 const expenseRoutes = require('./routes/expenses');
 const budgetRoutes = require('./routes/budget');
 const incomeRoutes = require('./routes/income');
+const adminRoutes = require('./routes/admin');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/budget', budgetRoutes);
 app.use('/api/incomes', incomeRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Error handling
 app.use((err, req, res, next) => {
